@@ -10,6 +10,7 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+    private final UserProducer userProducer;
 
     @GetMapping
     public List<UserDto> getAllUsers() {
@@ -24,5 +25,10 @@ public class UserController {
     @PostMapping
     public UserDto saveNewUser(@RequestBody UserDto user) {
         return userService.saveUser(user);
+    }
+
+    @PostMapping("/schedule-creation")
+    public void scheduleSaveNewUser(@RequestBody UserDto user) {
+        userProducer.send(user);
     }
 }
