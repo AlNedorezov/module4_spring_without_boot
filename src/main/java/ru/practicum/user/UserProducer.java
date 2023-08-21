@@ -13,6 +13,7 @@ import ru.practicum.pulsar.AggregateMessageKey;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -25,16 +26,17 @@ public class UserProducer {
     private Producer<UserDto> producer;
     private static final String AGGREGATE_NAME = "user";
     private static final String UNKNOWN = "unknown";
-    private static final String EVENT_NAME_MESSAGE_SUCCESSFULLY_SENT = "{} message successfully sent!";
-    private static final String KEY = "Key: {}";
-    private static final String MESSAGE_ID = "MessageId: {}";
-    private static final String EVENT_NAME_COLON_MESSAGE = "{} : {}";
+    private static final String TOPIC_NAME = "add-user";
+    private static final String EVENT_NAME_MESSAGE_SUCCESSFULLY_SENT =
+            "{} message successfully sent! MessageId: {}, Key: {}, Value: {}, Properties: {}";
     private static final String EVENT_FAIL = "Failed to sent {} message";
+
+    Map<String, String> massageProperties = Map.of("data_source", "rest-api");
 
     @PostConstruct
     private void postConstruct() throws PulsarClientException {
         producer = pulsarClient.newProducer(JSONSchema.of(UserDto.class))
-                .topic("add-user")
+                .topic(TOPIC_NAME)
                 .create();
     }
 
@@ -50,12 +52,11 @@ public class UserProducer {
                     .newMessage()
                     .key(keyString)
                     .value(message)
+                    .properties(massageProperties)
                     .send();
             final String eventName = UserDto.class.getSimpleName();
-            log.info(EVENT_NAME_MESSAGE_SUCCESSFULLY_SENT, eventName);
-            log.info(KEY, keyString);
-            log.info(EVENT_NAME_COLON_MESSAGE, eventName, message.toString());
-            log.info(MESSAGE_ID, messageId);
+            log.info(EVENT_NAME_MESSAGE_SUCCESSFULLY_SENT,
+                    eventName, messageId, keyString, message.toString(), massageProperties);
         } catch (PulsarClientException e) {
             log.error(EVENT_FAIL, UserDto.class.getSimpleName());
         }
