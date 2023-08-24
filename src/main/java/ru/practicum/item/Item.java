@@ -4,14 +4,26 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.*;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "items")
-@Getter @Setter @ToString
+@Table(name = Item.TABLE_NAME)
+@Getter
+@Setter
+@ToString
 class Item {
+    public static final String TABLE_NAME = "items";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,8 +36,8 @@ class Item {
     // здесь остальные поля
 
     @ElementCollection
-    @CollectionTable(name="tags", joinColumns=@JoinColumn(name="item_id"))
-    @Column(name="name")
+    @CollectionTable(name = "tags", joinColumns = @JoinColumn(name = "item_id"))
+    @Column(name = "name")
     private Set<String> tags = new HashSet<>();
 
     @Override

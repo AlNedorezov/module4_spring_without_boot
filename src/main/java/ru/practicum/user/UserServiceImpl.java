@@ -9,11 +9,17 @@ import java.util.List;
 @RequiredArgsConstructor
 class UserServiceImpl implements UserService {
     private final UserRepository repository;
+    private final UserRepositoryQDSL queryDSLRepository;
 
     @Override
     public List<UserDto> getAllUsers() {
         List<User> users = repository.findAll();
         return UserMapper.mapToUserDto(users);
+    }
+
+    public UserDto getById(Long id) {
+        User user = queryDSLRepository.findById(id);
+        return UserMapper.mapToUserDto(user);
     }
 
     @Override

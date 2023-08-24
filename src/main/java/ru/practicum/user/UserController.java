@@ -16,6 +16,11 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @GetMapping("/{userId}")
+    public UserDto getAllUsers(@PathVariable final Long userId) {
+        return userService.getById(userId);
+    }
+
     @PostMapping
     public UserDto saveNewUser(@RequestBody UserDto user) {
         return userService.saveUser(user);

@@ -8,9 +8,10 @@ import javax.persistence.*;
 import java.time.Instant;
 
 @Entity
-@Table(name = "users", schema = "public")
+@Table(name = User.TABLE_NAME, schema = "public")
 @Getter @Setter @ToString
 public class User {
+    public static final String TABLE_NAME = "users";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
